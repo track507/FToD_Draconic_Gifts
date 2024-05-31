@@ -39,7 +39,7 @@ FeatsList["draconic gifts"] = {
     source : [["FToD", 27]],
     descriptionFull : "",
 	allowDuplicates : true,
-    choices : ["Draconic Familiar [Uncommon]"],
+    choices : ["Draconic Familiar [Uncommon]", "Draconic Senses [Rare]", "Echo of Dragonsight [Very Rare]", "Frightful Presence [Very Rare]"],
     //choices : ["Draconic Familiar [Uncommon]", "Draconic Rebirth [Uncommon]", "Draconic Senses [Rare]", "Echo of Dragonsight [Very Rare]", "Frightful Presence [Very Rare]", "Psionic Reach [Very Rare]", "Scaled Toughness [Legendary]", "Tongue of the Dragon [Uncommon]"],
     "draconic familiar [uncommon]" : {
         name : "Draconic Familiar [Uncommon]",
@@ -82,7 +82,7 @@ FeatsList["draconic gifts"] = {
     //             name : rObjName,
     //             regExpSearch : /\b\(rebirth\)\b/i, // the only thing we care about in the name
     //             plural : (cVar == '' || !rObj.variants[cVar].plural ? rObj.plural : rObj.variants[cVar].plural), // if there is no current variant OR the current variant does not have a plural attribute
-    //             source : (cVar == '' || !rObj.variants[cVar].source ? rObj.source : rObj.variants[cVar].source), // all races must have a source, but in case it doesn't, this should pick the races source instead of the variant's source
+    //             source : (cVar == '' || !rObj.variants[cVar].source ? rObj.source : rObj.variants[cVar].source), // all races must have a source, but in case it doesn't, this should pick the current races source instead of the variant's source
     //             traits : "", // to be replaced by a dragon's trait
     //             size : tDoc.getField("Size Category").currentValueIndices,
     //             speed : (cVar == '' || !rObj.variants[cVar].speed ? rObj.speed : rObj.variants[cVar].speed),
@@ -93,5 +93,29 @@ FeatsList["draconic gifts"] = {
     //             }
     //         }
     //     }
-    // }
+    // },
+    "draconic senses [rare]" : {
+        name : "Draconic Senses [Rare]",
+        description : "I gain keen senses like a dragon. I have blindsight out to a range of 10 ft. Within this range, I can see anything that isn't behind total cover, even if I am blinded or in darkness. This also inclused invisible creatures, unless the creatures successfully hide from me. Additionally, I have advantage on Perception checks.",
+        vision : [["Blindsight", 10], ["Adv. on Perception", 0]]
+    },
+    "echo of dragonsight [very rare]" : {
+        name : "Echo of Dragonsight [Very Rare]",
+        description : "I can cast Contact Other Plane as a ritual. The entity I contact is a dragon on another world in the Material Plane, so its knowledge of my world might be limited. Also, this dragon is an echo of the dragon who is the source of the gift, which might affects its attitude and behavior toward me.",
+        spellcastingBonus : {
+            name : "Echo of Dragonsight",
+            spells : ["contact other plane"],
+            selection : ["contact other plane"],
+            times : 1
+        }
+    },
+    "frightful presence [very rare]" : {
+        name : "Frightful Presence [Very Rare]",
+        //description : "My Prof bonus per long rest, I can use a bonus action to force each creature of my choice within 120 ft and aware of me to make a Wisdom saving throw vs. DC (8 + Prof + Cha mod) or become frightened of me for 1 minute, repeating the save at the end of each of its turns, ending the effect on a success.",
+        calculate : "event.value = 'My Prof bonus per long rest, I can use a bonus action to force each creature of my choice within 120 ft and aware of me to make a Wisdom saving throw vs. DC ' + (8 + Number(How('Proficiency Bonus')) + Number(What('Cha Mod'))) + ' (8 + Prof + Cha mod) or become frightened of me for 1 minute, repeating the save at the end of each of its turns, ending the effect on a success.';",
+        limfeaname : "Frightful Presence",
+        action : [["bonus action", "Frightful Presence"]],
+        usages : "Proficiency bonus per ",
+        usagescalc : "event.value = How('Proficiency Bonus');",
+    }
 }
