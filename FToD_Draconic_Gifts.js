@@ -63,6 +63,7 @@ FeatsList["draconic gifts"] = {
         Either keep all skills or pick 2
         Need to change the name in the Racial Trait to read "original race name (dragonborn)" since only the traits is replaced by gem/chromatic/metallic
         A possible work around is to create a new RaceList entry and useFromPreviousRace. Possiblly add that using an eval so that it normally can't be accessed outside of this feat
+        Another solution is to add each gift as its own FeatsList entry so that the gem/chromatic/metallic can be selectable choices, but this does not solve the issue of applying it to the current Racial Traits
     */
     // "draconic rebirth [uncommon]" : { 
     //     name : "Draconic Rebirth [Uncommon]",
