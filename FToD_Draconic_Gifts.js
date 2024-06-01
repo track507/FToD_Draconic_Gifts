@@ -65,7 +65,7 @@ FeatsList["draconic familiar [uncommon]"] = {
 // FeatsList["draconic rebirth [uncommon]"] = {
 //     name : "Draconic Rebirth [Uncommon]",
 //     source : [["FToD", 27]],
-//     // missing source
+//     // missing description
 //     eval : function() {
 //         if(!CurrentRace.known) return;
 
