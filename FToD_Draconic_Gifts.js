@@ -53,46 +53,168 @@ FeatsList["draconic familiar [uncommon]"] = {
     }
 }
 
-
-/*
-    This will need some help to get to work. I am unsure what the field name for the Race drop down menu is (using PickDropdown)
-    Either keep all skills or pick 2
-    Need to change the name in the Racial Trait to read "original race name (dragonborn)" since only the traits is replaced by gem/chromatic/metallic
-    A possible work around is to create a new RaceList entry and useFromPreviousRace. Possibly add that using an eval so that it normally can't be accessed outside of this feat
-    Another solution is to add each gift as its own FeatsList entry so that the gem/chromatic/metallic can be selectable choices, but this does not solve the issue of applying it to the current Racial Traits
-*/
-
-// FeatsList["draconic rebirth [uncommon]"] = {
-//     name : "Draconic Rebirth [Uncommon]",
-//     source : [["FToD", 27]],
-//     // missing description
-//     eval : function() {
-//         if(!CurrentRace.known) return;
-
-//         var cVar = (CurrentRace.variant != '' ? CurrentRace.variant : ''); // if we are a racial variant
-//         var cRace = CurrentRace.known; // current race
-//         var rObjName = cRace + (cVar == '' ? '' : ' ' + cVar) + ' (rebirth)'; // Current Race + Racial Variant + Rebirth
-//         var rTraits = What("Racial Traits");
-//         var rObj = RaceList[cRace];
-
-//         RaceList[rObjName] = {
-//             // all necessary and required by the sheet.
-//             name : rObjName,
-//             regExpSearch : /\b\(rebirth\)\b/i, // the only thing we care about in the name
-//             plural : (cVar == '' || !rObj.variants[cVar].plural ? rObj.plural : rObj.variants[cVar].plural), // if there is no current variant OR the current variant does not have a plural attribute
-//             source : (cVar == '' || !rObj.variants[cVar].source ? rObj.source : rObj.variants[cVar].source), // all races must have a source, but in case it doesn't, this should pick the current races source instead of the variant's source
-//             traits : "", // to be replaced by a dragon's trait
-//             size : tDoc.getField("Size Category").currentValueIndices,
-//             speed : (cVar == '' || !rObj.variants[cVar].speed ? rObj.speed : rObj.variants[cVar].speed),
-//             useFromPreviousRace : {
-//                 message : "" + desc([]),
-//                 gainTraits : ["size", "age", "height", "weight", "heightMetric", "weightMetric", "languageProfs", "skillstxt", "skills", "speed.climb", "speed.fly", "speed.swim"],
-//                 // name does not need to be updated since it's done above.
-//             }
-//         }
-//     }
-// }
-
+var FToD_dragonborns_add = function () { // Copied from the main script and edited to fit Draconic Rebirth
+	var objDragonborns = {
+		Chromatic : {
+			regExpSearch : /^(?=.*chromatic)(?=.*dragonborn)(?=.*reborn).*$/i,
+			source : [["FToD", 27]],
+			variants : [["Black", "Acid"], ["Blue", "Lightning"], ["Green", "Poison"], ["Red", "Fire"], ["White", "Cold"]],
+			breathWeaponShape : "5-ft by 30-ft line",
+			trait : desc([
+				">>TYPE<< Breath Weapon: When I take the Attack action on my turn, I can replace one attack with a breath weapon that deals 1d10 >>type<< damage to all in a 5-ft by 30-ft line, Dex save halves (DC 8 + Con mod + Proficiency Bonus). I can do this my Proficiency Bonus per long rest. The damage increases with +1d10 at 5th, 11th, and 17th level.",
+				"Chromatic Warding: From 5th level, I can protect myself using my draconic energies. As an action once per long rest, I can become immune to >>type<< damage for 1 minute."
+			], "\n \u2022 "),
+			features : {
+				"chromatic warding" : {
+					name : "Chromatic Warding",
+					source : [["FToD", 10]],
+					minlevel : 5,
+					usages : 1,
+					recovery : "long rest",
+					action : [["action", ""]]
+				}
+			}
+		},
+		Gem : {
+			regExpSearch : /^(?=.*gem)(?=.*dragonborn)(?=.*reborn).*$/i,
+			source : [["FToD", 27]],
+			variants : [["Amethyst", "Force"], ["Crystal", "Radiant"], ["Emerald", "Psychic"], ["Sapphire", "Thunder"], ["Topaz", "Necrotic"]],
+			breathWeaponShape : "15-ft cone",
+			trait : desc([
+				">>TYPE<< Breath Weapon: When I take the Attack action on my turn, I can replace one attack with a breath weapon that deals 1d10 >>type<< damage to all in a 15-ft cone, Dex save halves (DC 8 + Con mod + Prof Bonus). I can do this my Prof" + (typePF ? "iciency" : ".") + " Bonus per long rest.",
+				"Psionic Mind: " + (typePF ? "I can send telepathic messages to any creature I can see within 30 ft that understands at least one language." : "I can telepathically message a creature with a language I can see in 30 ft."),
+				"Gem Flight: From 5th level, I can manifest spectral wings. As a bonus action once per long rest, I can gain, for 1 minute, a flying speed equal to my walking speed and can hover."
+			], "\n \u2022 "),
+			features : {
+				"gem flight" : {
+					name : "Gem Flight",
+					source : [["FToD", 11]],
+					minlevel : 5,
+					usages : 1,
+					recovery : "long rest",
+					action : [["bonus action", ""]]
+				}
+			}
+		},
+		Metallic : {
+			regExpSearch : /^(?=.*metallic)(?=.*dragonborn)(?=.*reborn).*$/i,
+			source : [["FToD", 27]],
+			variants : [["Brass", "Fire"], ["Bronze", "Lightning"], ["Copper", "Acid"], ["Gold", "Fire"], ["Silver", "Cold"]],
+			breathWeaponShape : "15-ft cone",
+			trait : desc([
+				">>TYPE<< Breath Weapon: When I take the Attack action on my turn, I can replace one attack with a breath weapon that deals 1d10 >>type<< damage to all in a 15-ft cone, Dex save halves (DC 8 + Con mod + Prof" + (typePF ? "iciency" : ".") + " Bonus). I can do this my Prof" + (typePF ? "iciency" : ".") + " Bonus per long rest.",
+				"Metallic Breath Weapon: At 5th level I gain a second breath weapon once per long rest, that works just like the first, but I choose the effect when I use it: Enervating: Con save or incapacitated until my next turn starts. Repulsion: Str save or pushed 20 ft and prone."
+			], "\n \u2022 "),
+			features : {
+				"metallic breath weapon" : {
+					name : "Metallic Breath Weapon",
+					source : [["FToD", 12]],
+					minlevel : 5,
+					usages : 1,
+					recovery : "long rest",
+					weaponsAdd : ["Metallic Breath Weapon"],
+					weaponOptions : [{
+						regExpSearch : /^(?=.*metallic)(?=.*breath)(?=.*weapon).*$/i,
+						name : "Metallic breath weapon",
+						source : [["FToD", 12]],
+						ability : 3,
+						type : 'Natural',
+						damage : ['Enervating', '', 'or Repulsion'],
+						range : "15-ft cone",
+						description : "Repulsion: Str save or pushed 20 ft \u0026 prone; Enervating: Con save or incapacitated till my next turn starts",
+						abilitytodamage : false,
+						dc : true
+					}]
+				}
+			}
+		}
+	}
+	for (var sDrBrn in objDragonborns) {
+		var sDrBrnLC = sDrBrn.toLowerCase();
+		var oDrBrn = objDragonborns[sDrBrn];
+		RaceList["reborn " + sDrBrnLC + " dragonborn"] = {
+			regExpSearch : oDrBrn.regExpSearch,
+			name : "Reborn " + sDrBrn + " Dragonborn",
+			sortname : "Reborn Dragonborn, " + sDrBrn,
+			source : oDrBrn.source,
+			plural : sDrBrn + " Dragonborn",
+			size : 3,
+			speed : {
+				walk : { spd : 30, enc : 20 }
+			},
+			weaponsAdd : ["Breath Weapon"],
+			weaponOptions : [{
+				regExpSearch : /^(?=.*breath)(?=.*weapon).*$/i,
+				name : "Breath weapon",
+				source : oDrBrn.source,
+				ability : 3,
+				type : 'Natural',
+				damage : ['C', 10, 'fire'],
+				range : oDrBrn.breathWeaponShape.replace('by', '\xD7'),
+				description : "Hits all in area; Dex save, success - half damage",
+				abilitytodamage : false,
+				dc : true,
+				dbBreathWeapon : true
+			}],
+			age : " reach adulthood by 15 and live around 80 years",
+			height : " stand well over 6 feet tall (5'6\" + 2d8\")",
+			weight : " weigh around 240 lb (175 + 2d8 \xD7 2d6 lb)",
+			heightMetric : " stand well over 1,8 metres tall (170 + 5d8 cm)",
+			weightMetric : " weigh around 110 kg (80 + 5d8 \xD7 4d6 / 10 kg)",
+			scoresGeneric : true,
+            skillstxt : "Choose any two",
+			trait : sDrBrn + " Dragonborn Reborn"+
+				"\n \u2022 " + sDrBrn + ' Ancestry: Choose a type of dragon using the "Racial Options" button. The damage type of my resistance and my breath weapon are determined by the dragon type chosen.'+
+				+ oDrBrn.trait.replace(/>>type<< /ig, ""),
+			features : {
+				"breath weapon" : {
+					name : "Breath Weapon",
+					minlevel : 1,
+					usages : "Proficiency bonus per ",
+					usagescalc : "event.value = How('Proficiency Bonus');",
+					recovery : "long rest",
+					additional : levels.map(function (n) {
+						return (n < 5 ? 1 : n < 11 ? 2 : n < 17 ? 3 : 4) + 'd10';
+					}),
+					calcChanges : {
+						atkAdd : [
+							function (fields, v) {
+								if (v.theWea.dbBreathWeapon && (/dragonborn/i).test(CurrentRace.known) && CurrentRace.variant) {
+									fields.Damage_Type = CurrentRace.dmgres[0];
+								}
+							},
+							'',
+							1
+						]
+					}
+				}
+			},
+            useFromPreviousRace : {
+                message : "If you choose 'Yes', you can keep any skill proficiencies you gained from your previous race."+
+                "\n\nIf you choose 'No', you can pick any two skills proficiencies of your choice\n",
+                gainTraits : ["skillstxt", "skills"],
+                updateName : "suffix"
+            },
+			variants : []
+		};
+		if (oDrBrn.features) {
+			for (var sFea in oDrBrn.features) {
+				RaceList["reborn " + sDrBrnLC + " dragonborn"].features[sFea] = oDrBrn.features[sFea];
+			}
+		}
+		for (var i = 0; i < oDrBrn.variants.length; i++) {
+			var sDrBrnVar = oDrBrn.variants[i][0];
+			var sDrBrnDmg = oDrBrn.variants[i][1];
+			AddRacialVariant("reborn " + sDrBrnLC + " dragonborn", sDrBrnVar.toLowerCase(), {
+				regExpSearch : RegExp(sDrBrnVar, "i"),
+				name : "Reborn " + sDrBrnVar + " " + sDrBrn + " Dragonborn",
+				trait : "Reborn " + sDrBrnVar + " " + sDrBrn + " Dragonborn"+
+					oDrBrn.trait.replace(/>>TYPE<</g, sDrBrnDmg).replace(/>>type<</g, sDrBrnDmg.toLowerCase()),
+				dmgres : [sDrBrnDmg]
+			});
+		}
+	}
+}();
 
 FeatsList["draconic senses [rare]"] = {
     name : "Draconic Senses [Rare]",
@@ -165,100 +287,3 @@ FeatsList["tongue of the dragon [uncommon]"] = {
     languageProfs : ["Draconic"],
     action : ["bonus action", "Tongue of the Dragon (300 ft)"]
 }
-
-
-/*
-
-    This was my initial attempt to make this under 1 FeatsList object but due to the complexity of some, requiring choices, this will need to be done separately. 
-
-*/
-
-// FeatsList["draconic gifts"] = {
-//     name : "Draconic Gifts",
-//     source : [["FToD", 27]],
-//     descriptionFull : "",
-// 	allowDuplicates : true,
-//     choices : ["Draconic Familiar [Uncommon]", "Draconic Senses [Rare]", "Echo of Dragonsight [Very Rare]", "Frightful Presence [Very Rare]"],
-//     //choices : ["Draconic Familiar [Uncommon]", "Draconic Rebirth [Uncommon]", "Draconic Senses [Rare]", "Echo of Dragonsight [Very Rare]", "Frightful Presence [Very Rare]", "Psionic Reach [Very Rare]", "Scaled Toughness [Legendary]", "Tongue of the Dragon [Uncommon]"],
-//     "draconic familiar [uncommon]" : {
-//         name : "Draconic Familiar [Uncommon]",
-//         description : "I gain the aid of a draconic familiar. I can cast the Find Familiar spell as a ritual without using any material components. When casted this way, the familiar always takes the form of a pseudodragon. Additionally, when I take the attack action on my turn, I can forgo one of my attacks to allow my pseudodragon familiar to make one attack of its own with its reaction.",
-//         creaturesAdd : [["Pseudodragon", true, false, "draconic_familiar"]],
-//         spellcastingBonus : [{
-//             name : "Draconic Familiar",
-//             spells : ["find familiar"],
-//             selection : ["find familiar"],
-//             times : 1
-//         }],
-//         spellChanges : {
-//             "find familiar" : {
-//                 compMaterial : "",
-//                 changes : "I can cast the Find Familiar spell as a ritual without using any material components."
-//             }
-//         }
-//     },
-//     /*
-//         This will need some help to get to work. I am unsure what the field name for the Race drop down menu is (using PickDropdown)
-//         Either keep all skills or pick 2
-//         Need to change the name in the Racial Trait to read "original race name (dragonborn)" since only the traits is replaced by gem/chromatic/metallic
-//         A possible work around is to create a new RaceList entry and useFromPreviousRace. Possiblly add that using an eval so that it normally can't be accessed outside of this feat
-//         Another solution is to add each gift as its own FeatsList entry so that the gem/chromatic/metallic can be selectable choices, but this does not solve the issue of applying it to the current Racial Traits
-//     */
-//     // "draconic rebirth [uncommon]" : { 
-//     //     name : "Draconic Rebirth [Uncommon]",
-//     //     eval : function() {
-//     //         if(!CurrentRace.known) return;
-
-//     //         var cVar = ''; // if we are a racial variant
-//     //         var cRace = CurrentRace.known; // current race
-//     //         var rObjName = cRace + (cVar == '' ? '' : ' ' + cVar) + ' (rebirth)'; // Current Race + Racial Variant + Rebirth
-//     //         var rTraits = What("Racial Traits");
-//     //         var rObj = RaceList[cRace];
-
-//     //         if(CurrentRace.variant != '') cVar = CurrentRace.variant;
-//     //         RaceList[rObjName] = {
-//     //             // all necessary and required by the sheet.
-//     //             name : rObjName,
-//     //             regExpSearch : /\b\(rebirth\)\b/i, // the only thing we care about in the name
-//     //             plural : (cVar == '' || !rObj.variants[cVar].plural ? rObj.plural : rObj.variants[cVar].plural), // if there is no current variant OR the current variant does not have a plural attribute
-//     //             source : (cVar == '' || !rObj.variants[cVar].source ? rObj.source : rObj.variants[cVar].source), // all races must have a source, but in case it doesn't, this should pick the current races source instead of the variant's source
-//     //             traits : "", // to be replaced by a dragon's trait
-//     //             size : tDoc.getField("Size Category").currentValueIndices,
-//     //             speed : (cVar == '' || !rObj.variants[cVar].speed ? rObj.speed : rObj.variants[cVar].speed),
-//     //             useFromPreviousRace : {
-//     //                 message : "" + desc([]),
-//     //                 gainTraits : ["size", "age", "height", "weight", "heightMetric", "weightMetric", "languageProfs", "skillstxt", "skills", "speed.climb", "speed.fly", "speed.swim"],
-//     //                 // name does not need to be updated since it's done above.
-//     //             }
-//     //         }
-//     //     }
-//     // },
-//     "draconic senses [rare]" : {
-//         name : "Draconic Senses [Rare]",
-//         description : "I gain keen senses like a dragon. I have blindsight out to a range of 10 ft. Within this range, I can see anything that isn't behind total cover, even if I am blinded or in darkness. This also includes invisible creatures, unless the creatures successfully hide from me. Additionally, I have advantage on Perception checks.",
-//         vision : [["Blindsight", 10], ["Adv. on Perception", 0]]
-//     },
-//     "echo of dragonsight [very rare]" : {
-//         name : "Echo of Dragonsight [Very Rare]",
-//         description : "I can cast Contact Other Plane as a ritual. The entity I contact is a dragon on another world in the Material Plane, so its knowledge of my world might be limited. Also, this dragon is an echo of the dragon who is the source of the gift, which might affects its attitude and behavior toward me.",
-//         spellcastingBonus : {
-//             name : "Echo of Dragonsight",
-//             spells : ["contact other plane"],
-//             selection : ["contact other plane"],
-//             times : 1
-//         }
-//     },
-//     "frightful presence [very rare]" : {
-//         name : "Frightful Presence [Very Rare]",
-//         calculate : "event.value = 'My Prof bonus per long rest, I can use a bonus action to force each creature of my choice within 120 ft and aware of me to make a Wisdom saving throw vs. DC ' + (8 + Number(How('Proficiency Bonus')) + Number(What('Cha Mod'))) + ' (8 + Prof + Cha mod) or become frightened of me for 1 minute, repeating the save at the end of each of its turns, ending the effect on a success.';",
-//         limfeaname : "Frightful Presence",
-//         action : [["bonus action", "Frightful Presence"]],
-//         usages : "Proficiency bonus per ",
-//         usagescalc : "event.value = How('Proficiency Bonus');",
-//         recovery : "long rest"
-//     },
-//     "psionic reach [very rare]" : {
-//         name : "Psionic Reach [Very Rare]",
-//         description : "I gain resistance to psychic damage. Additionally, I learn the Telekinesis spell, and can cast it without expending a spell slot once per long rest or using a spell slot I have of the appropriate level. The spellcasting ability is Intelligence, Wisdom, or Charisma when I cast the spell with this gift (chosen when I gain the gift)."
-//     }
-// }
