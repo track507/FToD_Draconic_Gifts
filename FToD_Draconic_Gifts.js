@@ -1,4 +1,4 @@
-var iFileName = "FToD_Draconic_Gifts.js";
+var iFileName = "pub_20211019_FToD_Addon-Draconic-Gifts.js";
 RequiredSheetVersion("13.1.13");
 
 // CompanionList for draconic familiar choice
