@@ -1,5 +1,5 @@
 var iFileName = "pub_20211019_FToD_Addon-Draconic-Gifts.js";
-RequiredSheetVersion("13.1.13");
+RequiredSheetVersion("13.1.14");
 
 // CompanionList for draconic familiar choice
 CompanionList.draconic_familiar = {
@@ -112,7 +112,6 @@ var FToD_dragonborns_add = function () { // Copied from the main script and edit
 					minlevel : 5,
 					usages : 1,
 					recovery : "long rest",
-					weaponsAdd : ["Metallic Breath Weapon"],
 					weaponOptions : [{
 						regExpSearch : /^(?=.*metallic)(?=.*breath)(?=.*weapon).*$/i,
 						name : "Metallic breath weapon",
@@ -123,7 +122,8 @@ var FToD_dragonborns_add = function () { // Copied from the main script and edit
 						range : "15-ft cone",
 						description : "Repulsion: Str save or pushed 20 ft \u0026 prone; Enervating: Con save or incapacitated till my next turn starts",
 						abilitytodamage : false,
-						dc : true
+						dc : true,
+						selectNow : true
 					}]
 				}
 			}
