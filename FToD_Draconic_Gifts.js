@@ -1,5 +1,5 @@
 var iFileName = "pub_20211019_FToD_Addon-Draconic-Gifts.js";
-RequiredSheetVersion("13.1.14");
+RequiredSheetVersion("13.2.1");
 
 // CompanionList for draconic familiar choice
 CompanionList.draconic_familiar = {
@@ -251,25 +251,39 @@ FeatsList["psionic reach [very rare]"] = {
     source : [["FToD", 27]],
     description : "I gain resistance to psychic damage. Additionally, I learn the Telekinesis spell and can cast it without expending a spell slot once per long rest, or using a spell slot I have of the appropriate level. The spellcasting ability is Intelligence, Wisdom, or Charisma when I cast the spell with this gift (chosen when I gain the gift).",
     dmgres : ["Psychic"],
-    spellcastingBonus : [{
-        name : "Psionic Reach",
-        spells : ["telekinesis"],
-        selection : ["telekinesis"],
-        times : 1,
-        firstCol : "oncelr"
-    }],
     choices : ["Intelligence", "Wisdom", "Charisma"],
     "intelligence" : {
 		description : "I gain resistance to psychic damage. Additionally, I learn the Telekinesis spell and can cast it without expending a spell slot once per long rest, or by expending a spell slot I have of the appropriate level. The spellcasting ability for this is Intelligence.",
-        spellcastingAbility : 4
+        spellcastingAbility : 4,
+		spellcastingBonus : [{
+			name : "Psionic Reach",
+			spells : ["telekinesis"],
+			selection : ["telekinesis"],
+			times : 1,
+			firstCol : "oncelr"
+		}],
 	},
 	"wisdom" : {
 		description : "I gain resistance to psychic damage. Additionally, I learn the Telekinesis spell and can cast it without expending a spell slot once per long rest, or by expending a spell slot I have of the appropriate level. The spellcasting ability for this is Wisdom.",
-        spellcastingAbility : 5
+        spellcastingAbility : 5,
+		spellcastingBonus : [{
+			name : "Psionic Reach",
+			spells : ["telekinesis"],
+			selection : ["telekinesis"],
+			times : 1,
+			firstCol : "oncelr"
+		}],
 	},
 	"charisma" : {
 		description : "I gain resistance to psychic damage. Additionally, I learn the Telekinesis spell and can cast it without expending a spell slot once per long rest, or by expending a spell slot I have of the appropriate level. The spellcasting ability for this is Charisma.",
-        spellcastingAbility : 6
+        spellcastingAbility : 6,
+		spellcastingBonus : [{
+			name : "Psionic Reach",
+			spells : ["telekinesis"],
+			selection : ["telekinesis"],
+			times : 1,
+			firstCol : "oncelr"
+		}],
 	}
 }
 
